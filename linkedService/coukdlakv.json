@@ -1,0 +1,11 @@
+{
+	"name": "coukdlakv",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://co-uk-devops-edw-uat-kv.vault.azure.net/"
+		}
+	}
+}

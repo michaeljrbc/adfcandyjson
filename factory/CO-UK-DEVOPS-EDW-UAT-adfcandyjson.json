@@ -1,0 +1,9 @@
+{
+	"name": "CO-UK-DEVOPS-EDW-UAT-adfcandyjson",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "42dae6af-139b-47aa-8503-53876cb93ff4",
+		"tenantId": "8cb09124-b2c7-4dab-89ab-b3781aa4e809"
+	}
+}

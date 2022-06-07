@@ -1,0 +1,565 @@
+{
+	"name": "Load Carbon JSON to Stage",
+	"properties": {
+		"description": "loads [Stage].[candyraw] from files dropped in to coukdlablobstd / candyjson",
+		"activities": [
+			{
+				"name": "For Each JSON",
+				"description": "For Each Candy JSON Just Found",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter JSON Only",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get JSON Files').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Load JSON to CandyRaw",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink"
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"mappings": [
+										{
+											"source": {
+												"path": "$['JobNumber']"
+											},
+											"sink": {
+												"name": "JobNumber",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['JobDescription']"
+											},
+											"sink": {
+												"name": "JobDescription",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['ActivityReference']"
+											},
+											"sink": {
+												"name": "ActivityReference",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['ClientActivityReference']"
+											},
+											"sink": {
+												"name": "ClientActivityReference",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['ActivityQuantity']"
+											},
+											"sink": {
+												"name": "ActivityQuantity",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['ProjectReference']"
+											},
+											"sink": {
+												"name": "ProjectReference",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['EstimateName']"
+											},
+											"sink": {
+												"name": "EstimateName",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['ProjectName']"
+											},
+											"sink": {
+												"name": "ProjectName",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['ActivityQuantityUnit']"
+											},
+											"sink": {
+												"name": "ActivityQuantityUnit",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "$['FileName']"
+											},
+											"sink": {
+												"name": "FileName",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['RESOURCE']"
+											},
+											"sink": {
+												"name": "RESOURCE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['DESCRIPTION']"
+											},
+											"sink": {
+												"name": "DESCRIPTION",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['CUR']"
+											},
+											"sink": {
+												"name": "CUR",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['QUANTITY']"
+											},
+											"sink": {
+												"name": "QUANTITY",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['UNIT']"
+											},
+											"sink": {
+												"name": "UNIT",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['RATE']"
+											},
+											"sink": {
+												"name": "RATE",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['AMOUNT']"
+											},
+											"sink": {
+												"name": "AMOUNT",
+												"type": "String"
+											}
+										},
+										{
+											"source": {
+												"path": "['PRODUCTION']"
+											},
+											"sink": {
+												"name": "PRODUCTION",
+												"type": "String"
+											}
+										}
+									],
+									"collectionReference": "$['Items']"
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "CandyJSON",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "AzureSqlDatabaseSTAGE",
+									"type": "DatasetReference",
+									"parameters": {
+										"sinkTableName": {
+											"value": "stage.CarbonCandyRaw",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Update Candy Metadata",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Load JSON to CandyRaw",
+									"dependencyConditions": [
+										"Completed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[Stage].[SetCandyMetadata]",
+								"storedProcedureParameters": {
+									"DataFactoryName": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"PipelineRunId": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"SourceFileName": {
+										"value": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "SQLDestinationStage",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Copy File to Archive",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Update Candy Metadata",
+									"dependencyConditions": [
+										"Completed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "CandyJSON",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "CandyArchiveJSON",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Archive Source Blob",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "Copy File to Archive",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "CandyJSON",
+									"type": "DatasetReference"
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								}
+							}
+						},
+						{
+							"name": "Log Activity",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Archive Source Blob",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[src].[InsertFileLogSimple]",
+								"storedProcedureParameters": {
+									"FileADSLPathFull": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileGeneratedBy": {
+										"value": {
+											"value": "@pipeline().DataFactory",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileName": {
+										"value": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"FileTypeKey": {
+										"value": "80001",
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "SQLDestinationDWH",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "Copy File to Failed",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Load JSON to CandyRaw",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "AzureBlobStorageReadSettings",
+										"recursive": true
+									}
+								},
+								"sink": {
+									"type": "JsonSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "JsonWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "CandyJSON",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "CandyArchiveJSON",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Archive Source on Fail",
+							"type": "Delete",
+							"dependsOn": [
+								{
+									"activity": "Copy File to Failed",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "CandyJSON",
+									"type": "DatasetReference"
+								},
+								"enableLogging": false,
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Get JSON Files",
+				"description": "Get JSON Files Ready for Loading",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "JsonFilesToLoad",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": true
+					}
+				}
+			},
+			{
+				"name": "Filter JSON Only",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get JSON Files",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get JSON Files').output.childitems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@and(equals(item().type, 'File'),endswith(item().name,'.json'))",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"concurrency": 1,
+		"annotations": [],
+		"lastPublishTime": "2020-05-15T08:26:21Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

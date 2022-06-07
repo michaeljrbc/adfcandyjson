@@ -1,0 +1,23 @@
+{
+	"name": "CandyFailedJSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobCandyJSON",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@item().name",
+					"type": "Expression"
+				},
+				"container": "candyfailed"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

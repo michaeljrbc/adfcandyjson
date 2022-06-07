@@ -1,0 +1,19 @@
+{
+	"name": "SQLDestinationStage",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Data Source=co-uk-devops-edw-uat-sql.database.windows.net;Initial Catalog=co-uk-edw-stage;Persist Security Info=False;User ID=CO-UK-DEVOPS-EDW-UAT-ADMIN;Password=I3MJjDndbZsC5egWZEb66N5sw;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "coukdlakv",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "stagedb-pwd"
+			}
+		}
+	}
+}

@@ -1,0 +1,89 @@
+{
+	"name": "CandyJSON",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "blobCandyJSON",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@item().name",
+					"type": "Expression"
+				},
+				"container": "candyprocessed"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"JobNumber": {
+					"type": "string"
+				},
+				"JobDescription": {
+					"type": "string"
+				},
+				"ActivityReference": {
+					"type": "string"
+				},
+				"ClientActivityReference": {
+					"type": "string"
+				},
+				"ActivityQuantity": {
+					"type": "number"
+				},
+				"ProjectReference": {
+					"type": "string"
+				},
+				"EstimateName": {
+					"type": "null"
+				},
+				"ProjectName": {
+					"type": "string"
+				},
+				"ActivityQuantityUnit": {
+					"type": "string"
+				},
+				"FileName": {
+					"type": "string"
+				},
+				"Items": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"RESOURCE": {
+								"type": "string"
+							},
+							"DESCRIPTION": {
+								"type": "string"
+							},
+							"CUR": {
+								"type": "string"
+							},
+							"QUANTITY": {
+								"type": "number"
+							},
+							"UNIT": {
+								"type": "string"
+							},
+							"RATE": {
+								"type": "number"
+							},
+							"AMOUNT": {
+								"type": "number"
+							},
+							"PRODUCTION": {
+								"type": "number"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

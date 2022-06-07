@@ -1,0 +1,24 @@
+{
+	"name": "trigger1",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "Load Carbon JSON to Stage",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/candyprocessed/blobs/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/96fdc21d-a17d-406f-b875-d56d4a2b104a/resourceGroups/CO-UK-DEVOPS-EDW-UAT/providers/Microsoft.Storage/storageAccounts/coukdevopsedwuatcarbonsa",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

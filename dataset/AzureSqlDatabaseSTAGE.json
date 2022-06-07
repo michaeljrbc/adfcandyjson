@@ -1,0 +1,122 @@
+{
+	"name": "AzureSqlDatabaseSTAGE",
+	"properties": {
+		"description": "Connection to your destination data store.",
+		"linkedServiceName": {
+			"referenceName": "SQLDestinationStage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"sinkTableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "FileName",
+				"type": "varchar"
+			},
+			{
+				"name": "ProjectReference",
+				"type": "varchar"
+			},
+			{
+				"name": "EstimateName",
+				"type": "varchar"
+			},
+			{
+				"name": "ProjectName",
+				"type": "varchar"
+			},
+			{
+				"name": "JobNumber",
+				"type": "varchar"
+			},
+			{
+				"name": "JobDescription",
+				"type": "varchar"
+			},
+			{
+				"name": "ClientActivityReference",
+				"type": "varchar"
+			},
+			{
+				"name": "ActivityQuantity",
+				"type": "varchar"
+			},
+			{
+				"name": "ActivityQuantityUnit",
+				"type": "varchar"
+			},
+			{
+				"name": "ActivityReference",
+				"type": "varchar"
+			},
+			{
+				"name": "RESOURCE",
+				"type": "varchar"
+			},
+			{
+				"name": "DESCRIPTION",
+				"type": "varchar"
+			},
+			{
+				"name": "CUR",
+				"type": "varchar"
+			},
+			{
+				"name": "QUANTITY",
+				"type": "varchar"
+			},
+			{
+				"name": "UNIT",
+				"type": "varchar"
+			},
+			{
+				"name": "RATE",
+				"type": "varchar"
+			},
+			{
+				"name": "AMOUNT",
+				"type": "varchar"
+			},
+			{
+				"name": "PRODUCTION",
+				"type": "varchar"
+			},
+			{
+				"name": "DataFactoryName",
+				"type": "varchar"
+			},
+			{
+				"name": "SourceFileName",
+				"type": "varchar"
+			},
+			{
+				"name": "PipelineRunId",
+				"type": "varchar"
+			},
+			{
+				"name": "UploadTimeStamp",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "stage",
+			"table": {
+				"value": "CarbonCandyRaw",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
